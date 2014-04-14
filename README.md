@@ -7,3 +7,7 @@ Different new functions are implemented as helper. For an optimum use and a demo
 
 
 Master thesis project in bioinformatics in 2009 corrected and disclosed after the end of the confidential period.
+
+
+Dependencies of this project:
+STRIDE 
