@@ -2,7 +2,8 @@ LIPCUT
 ======
 
 This is a plugin for PyMOL which allows a simple structural comparison for lipases. 
-Different new functions are implemented as helper. For an optimum use and a demo, download the data of the Pleiss directory.
+Different new functions are implemented as helpers. 
+For an optimum use and a demo, download the data of the Pleiss directory.
 
 
 
