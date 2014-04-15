@@ -21,45 +21,44 @@
 # Street, Fifth Floor, Boston, MA 02110-1301, USA 
 #
 # DATE  : 2011-05
-# REV   : 1
+# REV   : 2
 # REQUIREMENTS: 
 #
 #############################################################################
 
-#importation des packages propres ‡ python, extÈrieurs 
-#et dÈveloppÈs spÈcialement pour cette application
-#‡ partir de packages externes :
+#importation of the python (third-parties and in house) packages needed
 from pymol import cmd
 
 
+#Checking functions and procedures: allow to print the different structures used 
+#in the application
 
-#ProcÈdures d'affichage des diffÈrentes structures utilisÈes dans l'application
-
-def affichage_boucle(Liste):
+#def affichage_boucle(Liste):
+def print_loop(Liste):
     """
-    ProcÈdure permettant d'afficher le contenu d'une liste, ligne par ligne
+    Procedure printing the content of one liste, line per line
     """ 
-    for elmt in Liste : #pour chaque ÈlÈment dans la liste
-        print elmt #afficher la liste
+    for elmt in Liste :
+        print elmt 
           
 ##
-def affichage_boucle_liste_dans_list(Liste):
+#def affichage_boucle_liste_dans_list(Liste):
+def print_loop_in_loop(Liste):
     """
-    ProcÈdure permettant d'afficher le contenu d'une liste contenant elle-mÍme des sous-listes, 
-    Sous-liste par sous-liste et ligne par ligne
+    Procedure printing line per line the content of lists themselves included in a list 
     """ 
-    cpt_l=0 #compteur de sous-listes
-    for sousliste in Liste : #pour chaque sous liste dans la liste principale :
-        cpt_l+=1 #incrÈmentation du compteur de liste
-        print "Sous-liste : ",cpt_l #affichage du numÈro de la sous-liste
-        cpt_e=0 #initialisation du compteur d'ÈlÈments pour la sous-liste considÈrÈe 
-        for elmt in sousliste : #pour chaque ÈlÈment dans la sous-liste
-            cpt_e+=1 #incrÈmentation du compteur d'ÈlÈments
-            print elmt #affichage de l'ÈlÈment
-        #‡ la fin de l'affichage de l'ensemble de la sous-liste, le nombre total d'ÈlÈment est affichÈ
-        print "il y a en tout : ",cpt_e,"elements dans cette sous-liste.\n" 
-    #‡ la fin de la prÈsentation de toutes les sous-listes, le nombre total de sous-listes est affichÈ
-    print "\nLa liste principale contient en tout "+cpt_l+" sous-listes."
+    il=0 #initialisation of the counter for the sub-lists
+    for sublist in Liste : #for each sublist in the main list
+        il+=1 #increment now since used to reference the sublist
+        print "Sublist #: ",il #print the index of the sublist
+        ie=0 #initialisation of the counter for the elements of the current sublist
+        for elmt in sublist : 
+            ie+=1 #increment the counter of the element (so it would display the correct number)
+            print elmt #print the current element
+        #when end of the sublist is reached, total number of elements in it is displayed
+        print "Total number of elements in sublist ",il,": ",ie,"element(s).\n" 
+    #when the end of the main list is reached, display of the total number of sublist it contains
+    print "\nThe main list contains "+il+" sublist(s)."
 ##
 
 def affichage_dico(dico):
