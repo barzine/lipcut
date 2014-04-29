@@ -21,14 +21,10 @@
 # Street, Fifth Floor, Boston, MA 02110-1301, USA 
 #
 # DATE  : 2011-05
-# REV   : 2
+# REV   : 3 (2014)
 # REQUIREMENTS: 
 #
 #############################################################################
-
-#importation of the python (third-parties and in house) packages needed
-from pymol import cmd
-
 
 #Checking functions and procedures: allow to print the different structures used 
 #in the application
