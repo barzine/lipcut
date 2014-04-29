@@ -37,8 +37,7 @@ import seq
 #import estimation
 
 
-#former name: positionnement_feuillets(num_feuillet,ser_cat,pos,listB,lg,listA,indexCA,site):
-def sheet_locus(sheet_nb,ser_cat,pos,listB,lg,listA,indexCA,site):
+def positionnement_feuillets(num_feuillet,ser_cat,pos,listB,lg,listA,indexCA,site):
     """ a partir de la liste des serines et des feuillets beta, reconstruction de l'organisation des feuillets entre eux
         c'est-a-dire que l'on positionne les feuillets beta5, beta4, beta6, beta7 et beta3
     """
