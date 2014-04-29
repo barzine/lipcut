@@ -99,26 +99,3 @@ def construct_dico_int(liste_entree=['vide']):
 
 
 cmd.extend('construct_dico',construct_dico)
-
-def removeAlt(obj="(all)", keep="A"):
-        """
-        from PyMOLWIKI
-        removeAlt -- remove all alternate location-atoms not of altloc "keep" from object.
- 
-        input:
-                obj -- the object(s) to remove the atoms frmo
-                keep -- which type of alt loc to keep
- 
-        output: none -- removes atoms
- 
-        examples:
-                removeAlt # remove all altLocations that aren't altloc A
-                removeAlt pdbID, C  # remove all but C altlocations from pdbID
-        """
-        
-        remStr = "%s and not (alt ''+%s)" % (obj, keep);
-        cmd.remove(remStr);
-
-cmd.extend('removeAlt',removeAlt)
-
-#cmd.align("1ACJ_stride&(c;A&i;200&n;ca)","1TCA_stride&(c;A&i;105&n;ca)")
