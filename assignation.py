@@ -26,9 +26,10 @@
 #
 #############################################################################
 
-#importation des packages propres ‡ python, extÈrieurs 
-#et dÈveloppÈs spÈcialement pour cette application
+#importation of libraries
 import copy
+
+#importation of local files
 import b_utils
 import utils
 import ser
@@ -36,9 +37,8 @@ import seq
 #import estimation
 
 
-#dÈfinition des procÈdures et fonctions:
-
-def positionnement_feuillets(num_feuillet,ser_cat,pos,listB,lg,listA,indexCA,site):
+#former name: positionnement_feuillets(num_feuillet,ser_cat,pos,listB,lg,listA,indexCA,site):
+def sheet_locus(sheet_nb,ser_cat,pos,listB,lg,listA,indexCA,site):
     """ a partir de la liste des serines et des feuillets beta, reconstruction de l'organisation des feuillets entre eux
         c'est-a-dire que l'on positionne les feuillets beta5, beta4, beta6, beta7 et beta3
     """
@@ -54,7 +54,7 @@ def positionnement_feuillets(num_feuillet,ser_cat,pos,listB,lg,listA,indexCA,sit
     beta={}#dictionnaire permettant de mÈmoriser l'assignation des diffÈrents brins
     avert={}#permet d'enregistrer les diffÈrents problËmes pouvant subvenir 
     #assignation de beta5
-    beta5=listB[num_feuillet]#lors de la sÈlection de la serine courante, le numÈro du brin beta ayant servi ‡ la sÈlectionner a ÈtÈ mÈmorisÈ aussi
+    beta5=listB[sheet_nb]#lors de la sÈlection de la serine courante, le numÈro du brin beta ayant servi ‡ la sÈlectionner a ÈtÈ mÈmorisÈ aussi
     listB.remove(beta5)#le brin assignÈ est retirÈ de l'ensemble, seuls les brins non encore assignÈs sont conservÈs
         
     #les traitements qui suivent tirent avantage de la topologie dÈcrite pour ce genre de protÈines
