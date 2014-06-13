@@ -33,7 +33,7 @@ import copy
 
 #dÈclaration des diffÈrentes fonctions et procÈdures
 
-#def uniq_sheet
+#def remove_duplicate
 def feuillet_unique(liste):
     """
         Cette fonction permet de retirer tous les doublons d'une liste de brins beta donnÈe.
