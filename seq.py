@@ -191,7 +191,7 @@ def parcours_liste(source,list_reference,liste_atomeCA,indexCA):
     return list_resultat
 
 
-
+#def retrieve_seq
 def recup_seq(seq_beta_prec,listB,listA,indexCA,place):
     """
         sous module pour recuperer le positionnement des feuillets les uns par rapport aux autres
