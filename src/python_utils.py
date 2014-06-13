@@ -73,20 +73,6 @@ def load_pdb_file(filename, fresh=True):
         cmd.color("gray30")#to improve the contrast with the different structural elements which will be displayed in color
 
 
-#def chargement_fichier_pdb2(filename):
-#    """
-#        permet de charger le fichier pdb et de faire les pretraitements necessaires au bon fonctionnement du script dans pyMOL
-#    """
-#    #cmd.delete("all") #initialise l'espace de travail dans pymol
-#    cmd.load(filename) #charge le fichier spÈcifiÈ par filename
-#    removeAlt()#retire tous jeux de coordonnÈes alternatif pour un atome donnÈ
-#    cmd.remove("hetatm")#permet de retirer les heteroatoms #attention : parfois certains fichiers sont mal annotÈs : un carbone alpha peu Ítre dÈcrit comme Ètant un hÈtÈro-atome
-#    cmd.remove("h.")#permet de retirer toutes les molÈcules d'eau
-#    cmd.hide("all")#permet de cacher l'ensemble de la structure
-#    #cmd.show("ribbon")#rÈaffiche la structure sous le format ruban
-#    cmd.show("cartoon")#rÈaffiche la structure sous le format cartoon
-#    #cmd.color("gray30")#colorise l'ensemble de gris - pour faire ressortir ultÈrieurement par contraste les fragments sÈlectionnÈs
-
 #def identificateur_pymol(atom):
 def identify_pymol(atom) 
     """
@@ -154,7 +140,7 @@ def color_struct(elmt,t_elmt):
     elif t_elmt=="B_AUTRE2":#for the other beta-sheet in the model
         for e in elmt:
             cmd.color("skyblue",identify_pymol(e))
-    #print "on sort de la fonction color_struct_beta_ser"#debug
+   
     
     #The two other amino acids of the catalytic site are colored and stress 
     #as they give a good qualitative perception of the rate of the superposition
