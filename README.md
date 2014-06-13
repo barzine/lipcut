@@ -12,3 +12,7 @@ Master thesis project in bioinformatics in 2009 corrected and disclosed after th
 
 Dependencies of this project:
 STRIDE 
+
+
+#TO-DO
+Next file to fix: src/b_utils.py
