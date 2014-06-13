@@ -33,9 +33,6 @@ import utils
 import ser
 import seq
 
-
-
-
 #def positionnement_feuillets(num_feuillet,ser_cat,pos,listB,lg,listA,indexCA,site):
 def sheets_position(sheet_num,ser_cat,pos,listB,lg,listA,indexCA, site):
     """
@@ -168,65 +165,45 @@ def sheets_position(sheet_num,ser_cat,pos,listB,lg,listA,indexCA, site):
 
 
 ####
-def traitement(listS,listB,lg,listA,indexCA,site):
+def treatment(listS,listB,lg,listA,indexCA,site):
     """
-        va traiter toutes les serines potentiellement catalytique et va essayer d'organiser les brins beta en suivant
-        la topologie de reference
+        every possible serine is going to be used as the catalytic serine and the beta sheets are going to be assigned 
+        in accordance with the topologic model
     """
     
-    #print "dans traitement"#debug : affichage de contrÙle
-    
-    #print "beta list :"
-    #utils.affichage_boucle(listB)
-    
-    #initialisation des variables
-    res=list()#liste contenant l'ensemble des solutions pour la structure traitÈe
-    warning={}#dictionnaire des avertissements gÈnÈrÈs par le traitement
+    #initialisation
+    res=list()#list of all the possible solution for the current crystal
+    warning={}#warning dictionary (warnings raised while the processing)
 
-    listB=b_utils.feuillet_unique(listB)#ce traitement permet de retirer tout brin etant reference 2 fois. 
-    #un brin est considere comme etant reference 2 fois, si le residu en N terminal et le residu en C terminal sont les memes
-    #(c-a-d meme numero, meme chaine pour les deux residus aux extremites)
-    #independemment de l'identifiant des brins ou de leur orientation
-    #print "beta list  apres feuillet unique:"
-    #utils.affichage_boucle(listB)
+    listB=b_utils.remove_duplicate(listB)#This function removes every duplicate in the beta sheet list
+    #a beta sheet is considered as a duplicate if the N-term and the C-term residues are identical
+    #(i.e. same number,same chain for the two extrem residues)
+    #This is independant of the beta sheet identifier or orientation
+
+   #integrity check of the referenced beta sheets and index correction of alpha carbon
+    listB,warning["brinB"]=b_utils.integrity_check(listB,indexCA,listA)
     
+    ser_cat=list() #record the list of the serine which might be catalytic
+    #the treatment is applied to every entry of this ser_cat list
     
-    #verification de l'intÈgritÈ des brins beta rÈfÈrencÈs et correction de l'indexation par rapport ‡ la liste des carbones alpha
-    listB,warning["brinB"]=b_utils.verif_integrite(listB,indexCA,listA)
-    
-    ser_cat=list() #va permettre de conserver la liste des serines possiblement catalytique.
-    #le traitement devra etre applique pour chaque element de cette liste
-    #utils.affichage_boucle(ser_list)#debug : affichage de contrÙle
-    #rÈcuperation de la sÈrine catalytique croisement de la liste de sÈrines avec celle de la liste des feuillets dans la variable l_ser_filtre
-    l_ser_filtre=ser.serine_site_catal(listS,listB,listA,site)#idealement, il n'y a qu'une seule serine dans la liste l_ser_filtre
-    #print "l_ser_filtre" #debug : affichage de contrÙle
-    #utils.affichage_boucle(l_ser_filtre) #debug : affichage de contrÙle
-    #print "nbre de serine selectionnees :"+str(len(l_ser_filtre))
+    #catalytic serines are retrieved and crossed to the beta sheets list in `l_ser_filtre` variable 
+    l_ser_filtre=ser.serine_site_catal(listS,listB,listA,site)#ideal case: only one serine in l_ser_filtre
+
     if len(l_ser_filtre)<1:
-        warning["Ser"]="#Probleme de reference : il n'existe aucune serine repondant aux criteres de selection pour une serine possiblement catalytique."
-        #on sort de la fonction car tout le reste du traitement depend de cette selection
+        warning["Ser"]="#Reference problem: There is not any serine with the correct features to be a possible catalytic serine."
+        #direct return since all the steps are sequential and need a serine
         return [[""],warning]
     
-    for s in l_ser_filtre:
-        #print "s"+str(s)#debug : affichage de controle     
-        ser_cat,num_feuillet,pos=s #on separe les differentes informations
-        #print "ser_cat :" #debug : affichage de contrÙle
-        #print ser_cat #debug : affichage de contrÙle
-        #afin de faciliter le controle visuel par l'utilisateur, on fait ressortir cette serine
+    for s in l_ser_filtre: #for every serine that can be the catalytic one:
+        ser_cat,sheet_num,pos=s #the different information are extracted in individual variable
+        #to help the user this serine is colored
         utils.color_struct(ser_cat,"SER")
-            
-        #print "debut de la disposition des brins pour la serine considere %(ser)s" %{'ser':ser_cat}#debug      
-        #l'assignation des brins pour cette sÈrine est conservÈe, avec l'identification de la sÈrine pour pouvoir Ítre utilisÈ ultÈrieurement
-        sol=positionnement_feuillets(num_feuillet,ser_cat,pos,copy.deepcopy(listB),lg,listA,indexCA,site)
+        #assignement of the beta sheets for this serine is conserved with the serine identifier    
+        sol=sheets_position(sheet_num,ser_cat,pos,copy.deepcopy(listB),lg,listA,indexCA,site)
         print"sol"+str(sol)
-        res.append(sol)#le triplet courant sÈrine/assignation des brins/avertissementsest ajoutÈ ‡ la liste des rÈsultats
+        res.append(sol)#the currant triplet: serine/ beta sheet assignation/ warnings is added to the solution list
         print"\n\n\n"
-        #print sol #debug : affichage de controle     
-    #fin du for permettant de parcourir toutes les sÈrines sÈlectionnÈes
-  
-    #print "sortie de traitement"
-    utils.affichage_boucle(res)
-    #print "nb de resultats"
-    #print len(res)
-    
+
+    utils.print_loop(res) #print on-screen of the different solutions
+
     return [res,warning]
