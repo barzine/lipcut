@@ -26,145 +26,140 @@
 #
 #############################################################################
 
-#importation des packages propres ‡ python, extÈrieurs 
-#et dÈveloppÈs spÈcialement pour cette application
+##libraries and personal files importation
 import copy
 import b_utils
 import utils
 import ser
 import seq
-#import estimation
 
 
-#dÈfinition des procÈdures et fonctions:
 
-def positionnement_feuillets(num_feuillet,ser_cat,pos,listB,lg,listA,indexCA,site):
-    """ a partir de la liste des serines et des feuillets beta, reconstruction de l'organisation des feuillets entre eux
-        c'est-a-dire que l'on positionne les feuillets beta5, beta4, beta6, beta7 et beta3
+
+#def positionnement_feuillets(num_feuillet,ser_cat,pos,listB,lg,listA,indexCA,site):
+def sheets_position(sheet_num,ser_cat,pos,listB,lg,listA,indexCA, site):
     """
-
-    #print "dans positionnement_feuillets" #debug : affichage de controle 
-    
-    #print "ser cat : "+str(ser_cat) #debug : affichage de controle 
-    #print indexCA[ser_cat[2]] #debug  : affichage de controle 
-    #print "pos",pos #debug  : affichage de controle 
-    
-    
-    #initialisation des variables
-    beta={}#dictionnaire permettant de mÈmoriser l'assignation des diffÈrents brins
-    avert={}#permet d'enregistrer les diffÈrents problËmes pouvant subvenir 
-    #assignation de beta5
-    beta5=listB[num_feuillet]#lors de la sÈlection de la serine courante, le numÈro du brin beta ayant servi ‡ la sÈlectionner a ÈtÈ mÈmorisÈ aussi
-    listB.remove(beta5)#le brin assignÈ est retirÈ de l'ensemble, seuls les brins non encore assignÈs sont conservÈs
+        from the serine list and the beta sheet list, a possible spatial organisation of the beta sheet is build,
+        i.e. the beta sheet 5 (beta5), 4 (beta4), 6 (beta6), 7 (beta7) and 8 (beta8) are assigned
+        sheet_num:
+        ser_cat:
+        pos:
+        listB: list of the beta sheet defined from the pdb file
+        lg: length of sequence to use for the beta sheet
+        indexCA:
+        site
         
-    #les traitements qui suivent tirent avantage de la topologie dÈcrite pour ce genre de protÈines
-    #sÈlection des n rÈsidus(utilisation des carbones alphas) du "beta5"
-    #les lg rÈsidus sont rÈcupÈrÈs en C-terminal du brin considÈrÈ comme Ètant le brin numÈro b5 pour cette sÈrine
-   
-    seq_beta5=list()#crÈation de la liste qui va mÈmoriser les carbones alpha d'intÈrÍt
-    #ces carbones vont permettre de positionner les autres brins et dans un second temps 
-    #pour les alignements inter-structures
-
-    #en utilisant la position de la serine par rapport au feuillet
-    ref=int(indexCA[ser_cat[2]][1])-int(indexCA[ser_cat[2]][0])-int(pos)+int(ser_cat[0])
-    #le dernier -1 est la car on ne veut pas recuperer la sÈrine elle-mÍme
-    #print "ref : "+str(ref) #debug : affichage de controle 
-
-    #print "boucle de recup pour seq_beta5 :"   #debug : affichage de controle 
-    for i in range(lg) :
-        #print ref-i#debug : affichage de controle 
-        t=listA[ref-i]
-        #print t   #debug : affichage de controle 
-        seq_beta5.append(t)#le rÈsidu  est ajoutÈ ‡ la liste 
+    """
+    #initialisation 
+    beta={}#dict for the beta sheet assignation 
+    avert={}#to keep record of the different errors or warnings
     
-    #‡ ce niveau, la sÈquence est complËte
+    #assignation of beta5
+    beta5=listB[sheet_num]#when the current ser has been assigned, the number of the beta sheet used for the selection has been recorded as well
+    listB.remove(beta5)#every assigned beta sheet is remove from listB which only contains then still-to-be assigned beta sheet
+    
+    #The following steps take advantage of the described topology for the lipases:
+    # a) selection of the n residues of beta5 - this done by recording the alpha carbons of the main chain
+    # b) lg residues at the C-term of this serine are considered to constitute the beta5
 
-    #print seq_beta5#debug : affichage de controle          
-    seq_beta5.reverse()#les rÈsidus sont repositionner dans l'ordre N-terminal vers C-terminal
-    #utils.affichage_boucle(seq_beta5)
-    beta["B5"]=(beta5,seq_beta5)#l'identificateur dui brin et la sÈquence associÈe est enregistrÈe dans le dictionnaire des brins assignÈs
+    seq_beta5=list()#list recording the Calpha of the presume beta5
+    #Theses carbons are used for assigning the other beta sheets in accordance with the topology
+    # and they are used in the inter-structures superpositions as well.
+
+    
+    ref=int(indexCA[ser_cat[2]][1])-int(indexCA[ser_cat[2]][0])-int(pos)+int(ser_cat[0])#to find out the beta5 we use the serint
+    #the serine is just after the beta5 in the proteic sequence
+    
+    #the correct length of beta sheet (lg) has to be retrieved 
+    for i in range(lg) :
+        t=listA[ref-i] #tuple referecing the atom placed at -i from the considered serine 
+        seq_beta5.append(t)#the tuple is added to the beta5 list
+    #all the sequence has been recorded
+    seq_beta5.reverse()#so the residues would be in the conventional order: N-term to C-term
+   
+    beta["B5"]=(beta5,seq_beta5)#the sequence with its name as a key are recorded in the assigned dictionary
                 
-    ####assignation des autres brins beta
-    beta6,seq_beta6,listB,sens=seq.recup_seq(seq_beta5,listB,listA,indexCA,"apres")
+    ####assignation of the other beta sheets
+    beta6,seq_beta6,listB,direction=seq.retrieve_seq(seq_beta5,listB,listA,indexCA,"after")
     if seq_beta6!=['none']:
         beta["B6"]=(beta6,seq_beta6)
-        if sens==-1:
-            avert["B6"]="Remarque : le brin b6 est antiparallele au b5"
+        if direction==-1:
+            avert["B6"]="Warning: b6 is antiparallel to b5"
     else :
         beta["B6"]=['none']
 
-    beta4,seq_beta4,listB,sens=seq.recup_seq(seq_beta5,listB,listA,indexCA,"avant")
+    beta4,seq_beta4,listB,direction=seq.retrieve_seq(seq_beta5,listB,listA,indexCA,"before")
     if seq_beta4!=['none']:
         beta["B4"]=(beta4,seq_beta4)
-        if sens==-1:
-            avert["B4"]="Remarque : le brin b4 est antiparallele au b5"
+        if direction==-1:
+            avert["B4"]="Warning: b4 is antiparallel to b5"
     else :
         beta["B4"]=['none']
                     
-    #pour le beta7 :
+    #for beta7 :
     if len(listB)>0 and seq_beta6!=['none']:
-        beta7,seq_beta7,listB,sens=seq.recup_seq(seq_beta6,listB,listA,indexCA,"apres")
+        beta7,seq_beta7,listB,direction=seq.retrieve_seq(seq_beta6,listB,listA,indexCA,"after")
         if seq_beta7!=['none'] :
             beta["B7"]=(beta7,seq_beta7)
-            if sens==-1:
-                avert["B7"]="Remarque : le brin b7 est antiparallele au b6"
+            if direction==-1:
+                avert["B7"]="Warning: b7 is antiparallel to b6"
         else :
             beta["B7"]=['none']
     else:
         beta["B7"]=['none']
         
-    #pour le beta8 :
+    #for beta8 :
     if len(listB)>0 and beta["B7"]!=['none']:
-        beta8,seq_beta8,listB,sens=seq.recup_seq(seq_beta7,listB,listA,indexCA,"apres")                 
+        beta8,seq_beta8,listB,direction=seq.retrieve_seq(seq_beta7,listB,listA,indexCA,"after")                 
         if seq_beta8!=['none'] :
             beta["B8"]=(beta8,seq_beta8)
-            if sens==-1:
-                avert["B8"]="Remarque : le brin b8 est antiparallele au b7"
+            if direction==-1:
+                avert["B8"]="Warning: b8 is antiparallel to b7"
         else:
             beta["B8"]=['none']
     else : 
         beta["B8"]=['none']
                     
-    #pour le beta3 :    
+    #for beta3 :    
     if len(listB)>0 and seq_beta4!=['none']:
-        beta3,seq_beta3,listB,sens=seq.recup_seq(seq_beta4,listB,listA,indexCA,"apres")
+        beta3,seq_beta3,listB,direction=seq.retrieve_seq(seq_beta4,listB,listA,indexCA,"after")
         if seq_beta3!=['none'] :
             beta["B3"]=(beta3,seq_beta3)
-            if sens==-1:
-                avert["B3"]="Remarque : le brin b3 est antiparallele au b4"
+            if direction==-1:
+                avert["B3"]="Warning: b3 is antiparallel to b4"
         else :
             beta["B3"]=['none'] 
     else:
         beta["B3"]=['none']   
                              
-    #pour le beta2 :
+    #for beta2 :
     if len(listB)>0 and beta["B3"]!=['none']:
-        beta2,seq_beta2,listB,sens=seq.recup_seq(seq_beta3,listB,listA,indexCA,"avant")
+        beta2,seq_beta2,listB,direction=seq.retrieve_seq(seq_beta3,listB,listA,indexCA,"before")
         if seq_beta2!=['none'] :
             beta["B2"]=(beta2,seq_beta2)
-            if sens ==-1:
-                avert["antiparallelite"]=True
+            if direction ==-1:
+                avert["antiparallelity"]=True
         else :
             beta["B2"]=['none']
     else : 
         beta["B2"]=['none']    
         
     
-    #tous les brins restants sont assignÈs dans une entrÈe spÈciale du dictionnaire
+    #all leftover beta sheet are regrouped in one entry of the dictionary beta
     if len(listB)>0:
-        beta["B_AUTRE"]=listB
-        avert["B_AUTRE"]="Il existe "+str(len(listB))+" brins n'ayant pas ete assignes"
+        beta["B_OTHER"]=listB
+        avert["B_OTHER"]=str(len(listB))+" has/have not been assigned"
     else:
-        beta["B_AUTRE"]=['none']
+        beta["B_OTHER"]=['none']
     
-    if not ("antiparallelite" in avert):
-        avert["antiparallelite"]=False
-    #print "on sort de positionnement_feuillets" #debug : affichage de controle 
+    if not ("antiparallelity" in avert):
+        avert["antiparallelity"]=False
+    
     
     if beta['B8']==['none'] or beta['B2']==['none'] :
-        avert["manquant"]="Attention : Il existe des brins du modele qui n'ont aucune correspondance dans la structure analysee"
+        avert["missing"]="Warning: Some of the model beta sheets cannot been assigned in the crystal"
     else:
-        avert["manquant"]="Tous les brins du modele ont trouvÈs une correspondance dans la structure analysee"
+        avert["missing"]="Every beta sheet in the model has found a correspondance in the crystal"
         
     
     return [ser_cat,beta,avert]
