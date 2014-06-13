@@ -79,7 +79,7 @@ def feuillet_unique(liste):
 
 
 #####
-
+#def integrity_check
 def verif_integrite(listBrin,index,listCA):
     """
         permet de verifier que pour chaque brin de la liste des brins beta, tous les atomes sont bien definis
