@@ -26,109 +26,100 @@
 #
 #############################################################################
 
-#importation des packages propres ‡ python, extÈrieurs 
-#et dÈveloppÈs spÈcialement pour cette application
-#import utils
+#libraries and packages importation 
 import copy
 
-#dÈclaration des diffÈrentes fonctions et procÈdures
+#def feuillet_unique(liste):
+def remove_duplicate(liste):
+    """
+        Remove all duplicates of a beta sheet record from the input list: pdb files 
+        use several time the same beta sheet record to describe some specific tertionary structure
+        e.g. beta barrel. 
+        A beta sheet record is considered as duplicate if it has the same N and C terminal amino-acid
+        i.e. these two amino-acid have the exact same identifier for the two beta sheet record.
+        
+        This process does not take the orientation of the beta sheet in consideration
+    """
 
-#def remove_duplicate
-def feuillet_unique(liste):
-    """
-        Cette fonction permet de retirer tous les doublons d'une liste de brins beta donnÈe.
-    """
-    #En effet, la description pdb peut faire intervenir le mÍme brin plusieurs fois 
-    #dans la description d'un barrilet ou pour celle d'autres structures spÈcifiques
-    #
-    #Un brin est considÈre comme Ètant rÈfÈrencÈ deux fois, si le rÈsidu N-terminal 
-    #et le rÈsidu C-terminal du brin sont les mÍmes, c-a-d que l'on a les mÍmes numÈros, 
-    #les mÍmes identificateurs de chaÓne pour les deux rÈsidus aux extrÈmitÈs du brins
-    #
-    #Ce traitement se fait indÈpendemment de l'identifiant des brins ou de leur orientation
-    
-    #VÈrification de la nÈcessitÈ de ce traitement :
-    if len(liste)<2 : #la liste doit contenir au moins deux ÈlÈments
-        #s'il existe moins de deux ÈlÈments dans la liste, 
-        #soit c'est une liste vide, soit elle ne contient qu'un seul ÈlÈment
-        #il n'existe donc pas de doublon, la liste peut Ítre retournÈe telle qu'elle
+    #Check if there is a need of looking for duplicates
+    if len(liste)<2 : #if there are less than 2 elements, there can not be any duplicate
+        #the list is return without any modification
         return liste
   
-    #s'il existe plus de deux ÈlÈments :  
-    nv_list=[liste.pop(0)] #initialisation de la nouvelle liste ne contenant 
-    #pas de doublon et qui sera retournÈe ‡ la fin vec le premier ÈlÈment de la liste d'origine 
-    #note : le premier ÈlÈment de la liste est en mÍme temps retirÈ de la liste d'origine
-    
-    #pour chaque ÈlÈment restant de la liste d'origine, il est vÈrifiÈ qu'une mÍme description n'est pas dÈj‡ rÈfÈrencÈe
-    for e in liste :
-        #print "e =" #debug : affichage de contrÙle
-        #print e #debug : affichage de contrÙle
-        #le brin n'est recopiÈ que si le premier et le dernier rÈsidu sont diffÈrents de ceux de tous les brins dÈj‡ rÈfÈrencÈs :
-        trouve=False
+    #if 2 or more elements in the list:  
+    nv_list=[liste.pop(0)] #initialisation of the list which will contain only unique beta sheet 
+    #and that will be returned
+    #warning: pop will remove the current element from the original list
+   
+    #each remaining element of the list is checked 
+    #that not being a duplicate of one of the record already in the return list
+    for e in liste :#element from the original list
+        #the beta sheet is added in the return list only if first and last aa are not already in the return list
+        found=False
         i=0
-        while not(trouve) and i<len(nv_list):
+        while not(found) and i<len(nv_list): #as long as no duplicates has been found
             if ((e[1],e[2],e[3])==(nv_list[i][1],nv_list[i][2],nv_list[i][3]) and (e[4],e[5],e[6])==(nv_list[i][4],nv_list[i][5],nv_list[i][6])): #or ((e[1],e[2],e[3])==(i[4],i[5],i[6]) and (e[4],e[5],e[6])==(i[1],i[2],i[3])) :
-                trouve=True
+                found=True
             i+=1
-        if not trouve :
+        if not found : 
             nv_list.append(e)
-               
+  
     return (nv_list)
 
 
 
 
 #####
-#def integrity_check
-def verif_integrite(listBrin,index,listCA):
+#def verif_integrite(listBrin,index,listCA):
+def integrity_check(listBeta,index,listCA):
+
     """
         permet de verifier que pour chaque brin de la liste des brins beta, tous les atomes sont bien definis
         profite de l'occasion pour remplacer l'identifiant de la chaine par la clÈ qui lui correspond dans l'index des chaines 
         des atomes carbones alphas et ajoute un neuvieme champ ‡ la description des brins qui permet de vÈrifier de l'intÈgritÈ du brin
     """
-    #initialisation des variables
-    warning_brinB=""
-    listR=list()
+    #initialisation 
+    warning_beta="" #record the warnings 
+    listR=list() #
     t=tuple()
     cles=index.keys()
-    #print "dans la fonction verif_integrite"#debug : affichage de contrÙle
-    for b in listBrin:
-        #pour chaque brin, on parcourt du carbone alpha en N-terminal, jusqu'‡ la fin o˘ jusqu'au premier atomeCA manquant
-        deb=False
-        fin=False
-        IDdeb=""
-        trouve=False
-        k=0#initialisation du compteur permettant de parcourir le vecteur cle
-        while (not(trouve)): #permet d'arreter le traitement des que la bonne entree dans le dictionnaire est trouvee
-            if ((not deb)and b[2]==index[cles[k]][4]):
-                #l'identifiant de la chaine du premier rÈsidu correspond bien ‡ celui de l'entrÈe du dictionnaire actuellement considÈrÈe
-                #ainsi, il s'agit peut-Ítre de la bonne entrÈe du dictionnaire                
+    
+    for b in listBeta:
+        #for each beta sheet, every alpha Carbon, from the N-terminal to the C-terminal or to the first missing alpha carbon
+        start=False
+        end=False
+        IDstart=""
+        found=False
+        k=0#counter initialisation for the key
+        while (not(found)): #stop as soon as the correct entry of the dictiaonnary is found 
+            if ((not start)and b[2]==index[cles[k]][4]):
+                #chain identifier is the same as the one of the current dictioannary entry
+                #check if this is the entry we are looking for                
                 if int(index[cles[k]][0])<=int(b[3])and int(index[cles[k]][2])>=int(b[3]):
-                    #le numero du residu initial du brin est compris dans cette entrÈe du dictionnaire
-                    trouve=True #l'entrÈe courante est bien celle contenant l'extrÈmintÈ N-terminal du brin beta qui nous interresse
-                    deb=True#passe a vrai car on a trouve le debut
-                    IDdeb=copy.deepcopy(cles[k])#la clÈe rÈfÈrencant le fragment concernant l'extrÈmitÈ N-terminal du brin est mÈmorisÈ
+                    #the number of the inital residue is comprised in the current record
+                    found=True # we have found the correct beta sheet entry with the N-term we were looking for
+                    start=True#True now that we have the start
+                    IDstart=copy.deepcopy(cles[k])#la clÈe rÈfÈrencant le fragment concernant l'extrÈmitÈ N-terminal du brin est mÈmorisÈ
                     #IDdeb=utils.copy(cles[k])#la clÈe rÈfÈrencant le fragment concernant l'extrÈmitÈ N-terminal du brin est mÈmorisÈ
                     if index[cles[k]][4]==b[5] and int(index[cles[k]][0])<=int(b[6]) and int(index[cles[k]][2])>=int(b[6]):
-                        fin =True
+                        end =True
                     else:
-                        fin=False
+                        end=False
                 #fin du if trouvant le debut
             #fin du if cherchant la bonne entree
             k+=1
         #fin du while pour les entrees du dictionnaire
         
         #crÈation du tuple pour la nouvelle description qui sera retournÈe
-        if fin:#le fragment concernant l'extrÈmitÈ N-terminal et aussi celui qui concerne le c-terminal
-            t=(b[0],b[1],IDdeb,b[3],b[4],IDdeb,b[6],b[7],1)
+        if end:#le fragment concernant l'extrÈmitÈ N-terminal et aussi celui qui concerne le c-terminal
+            t=(b[0],b[1],IDstart,b[3],b[4],IDstart,b[6],b[7],1)
         else :#le fragment comportant l'extrÈmitÈ N-terminal ne contient pas celui du C-terminal, en d'autres termes,
             #il y a un certains nombres de rÈsidus non dÈcrits dans le fichier source
-            t=(b[0],b[1],IDdeb,b[3],b[4],b[5],b[6],b[7],0)
+            t=(b[0],b[1],IDstart,b[3],b[4],b[5],b[6],b[7],0)
             #avertisssement pour le rapport gÈnÈrÈ :
-            warning_brinB+="\nLe brin '"+b[0]+"' est incompletement decrit dans le fichier d'origine"
-            print "\nLe brin '"+b[0]+"' est incompletement decrit dans le fichier d'origine"#debug : affichage de contrÙle
+            warning_beta+="\nThe beta sheet '"+b[0]+"' is not correctly described in the original file"
         listR.append(t)
     #fin du for permettant de parcourir l'ensemble des brins beta
             
     #print "sortie de la fonction verif_integrite"#debug : affichage de contrÙle
-    return [listR,warning_brinB]
+    return [listR,warning_beta]
