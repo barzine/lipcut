@@ -52,7 +52,7 @@ def remove_duplicate(liste):
     #warning: pop will remove the current element from the original list
    
     #each remaining element of the list is checked 
-    #that not being a duplicate of one of the record already in the return list
+    #that it is not a duplicate of one of the record already in the return list
     for e in liste :#element from the original list
         #the beta sheet is added in the return list only if first and last aa are not already in the return list
         found=False
@@ -61,7 +61,7 @@ def remove_duplicate(liste):
             if ((e[1],e[2],e[3])==(nv_list[i][1],nv_list[i][2],nv_list[i][3]) and (e[4],e[5],e[6])==(nv_list[i][4],nv_list[i][5],nv_list[i][6])): #or ((e[1],e[2],e[3])==(i[4],i[5],i[6]) and (e[4],e[5],e[6])==(i[1],i[2],i[3])) :
                 found=True
             i+=1
-        if not found : 
+        if not found : #the beta sheet is unique, hence added to return list
             nv_list.append(e)
   
     return (nv_list)
@@ -74,9 +74,10 @@ def remove_duplicate(liste):
 def integrity_check(listBeta,index,listCA):
 
     """
-        permet de verifier que pour chaque brin de la liste des brins beta, tous les atomes sont bien definis
-        profite de l'occasion pour remplacer l'identifiant de la chaine par la clÈ qui lui correspond dans l'index des chaines 
-        des atomes carbones alphas et ajoute un neuvieme champ ‡ la description des brins qui permet de vÈrifier de l'intÈgritÈ du brin
+        This function serves sevaral purpose: 
+        1/ Check that each beta sheet of a given list has all its constitutive atoms defined 
+        2/ Replace the chain identifier by the corresponding key in the alpha Carbon index 
+        and add a 9th field for recording the beta sheet integrity
     """
     #initialisation 
     warning_beta="" #record the warnings 
@@ -105,21 +106,15 @@ def integrity_check(listBeta,index,listCA):
                         end =True
                     else:
                         end=False
-                #fin du if trouvant le debut
-            #fin du if cherchant la bonne entree
-            k+=1
-        #fin du while pour les entrees du dictionnaire
+            k+=1 
         
-        #crÈation du tuple pour la nouvelle description qui sera retournÈe
-        if end:#le fragment concernant l'extrÈmitÈ N-terminal et aussi celui qui concerne le c-terminal
+        #creation of the record with the new description
+        if end:#the fragment that contains the  N-terminal part is also the one containing the c-terminal part
             t=(b[0],b[1],IDstart,b[3],b[4],IDstart,b[6],b[7],1)
-        else :#le fragment comportant l'extrÈmitÈ N-terminal ne contient pas celui du C-terminal, en d'autres termes,
-            #il y a un certains nombres de rÈsidus non dÈcrits dans le fichier source
+        else :#the fragment containing the N-terminal part does not contain the C-terminal, i.e.
+            #some residues are not described in the original file
             t=(b[0],b[1],IDstart,b[3],b[4],b[5],b[6],b[7],0)
-            #avertisssement pour le rapport gÈnÈrÈ :
+            #warning is then created for the report:
             warning_beta+="\nThe beta sheet '"+b[0]+"' is not correctly described in the original file"
         listR.append(t)
-    #fin du for permettant de parcourir l'ensemble des brins beta
-            
-    #print "sortie de la fonction verif_integrite"#debug : affichage de contrÙle
     return [listR,warning_beta]
