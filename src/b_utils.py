@@ -32,8 +32,8 @@ import copy
 #def feuillet_unique(liste):
 def remove_duplicate(liste):
     """
-        Remove all duplicates of a beta sheet record from the input list: pdb files 
-        use several time the same beta sheet record to describe some specific tertionary structure
+        Remove all duplicates of a beta sheet record from the input list: pdb files are
+        using several times the same beta sheet record to describe some specific tertionary structure
         e.g. beta barrel. 
         A beta sheet record is considered as duplicate if it has the same N and C terminal amino-acid
         i.e. these two amino-acid have the exact same identifier for the two beta sheet record.
@@ -48,13 +48,13 @@ def remove_duplicate(liste):
   
     #if 2 or more elements in the list:  
     nv_list=[liste.pop(0)] #initialisation of the list which will contain only unique beta sheet 
-    #and that will be returned
-    #warning: pop will remove the current element from the original list
+    #and that would later be returned
+    #reminder: pop will remove the current element from the original list
    
     #each remaining element of the list is checked 
     #that it is not a duplicate of one of the record already in the return list
     for e in liste :#element from the original list
-        #the beta sheet is added in the return list only if first and last aa are not already in the return list
+        #the beta sheet is added in the return list only if its first and last aa-s are not already in the return list
         found=False
         i=0
         while not(found) and i<len(nv_list): #as long as no duplicates has been found
@@ -74,7 +74,7 @@ def remove_duplicate(liste):
 def integrity_check(listBeta,index,listCA):
 
     """
-        This function serves sevaral purpose: 
+        This function serves sevaral purposes: 
         1/ Check that each beta sheet of a given list has all its constitutive atoms defined 
         2/ Replace the chain identifier by the corresponding key in the alpha Carbon index 
         and add a 9th field for recording the beta sheet integrity
@@ -100,8 +100,7 @@ def integrity_check(listBeta,index,listCA):
                     #the number of the inital residue is comprised in the current record
                     found=True # we have found the correct beta sheet entry with the N-term we were looking for
                     start=True#True now that we have the start
-                    IDstart=copy.deepcopy(cles[k])#la clÈe rÈfÈrencant le fragment concernant l'extrÈmitÈ N-terminal du brin est mÈmorisÈ
-                    #IDdeb=utils.copy(cles[k])#la clÈe rÈfÈrencant le fragment concernant l'extrÈmitÈ N-terminal du brin est mÈmorisÈ
+                    IDstart=copy.deepcopy(cles[k])#Referencing the key for the fragment for N terminal extremity of the beta-sheet
                     if index[cles[k]][4]==b[5] and int(index[cles[k]][0])<=int(b[6]) and int(index[cles[k]][2])>=int(b[6]):
                         end =True
                     else:
