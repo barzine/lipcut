@@ -7,7 +7,7 @@ For an optimum use and a demo, download the data of the Pleiss directory.
 
 
 
-Master thesis project in bioinformatics in 2009 corrected and disclosed after the end of the confidential period.
+Master project in bioinformatics in 2009 translated, corrected and disclosed after the end of the confidential period.
 
 
 Dependencies of this project:
