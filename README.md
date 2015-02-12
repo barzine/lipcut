@@ -15,4 +15,4 @@ STRIDE
 
 
 #TO-DO
-Next file to fix: src/b_utils.py
+Next file to fix: ser.py
