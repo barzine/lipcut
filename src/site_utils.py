@@ -4,7 +4,7 @@
 #
 # @SUMMARY: -- 
 #             
-# Compatibility : teste seulement sur PyMOL 0.99 sous windows XP - python v2.4
+# Compatibility : tested only with PyMOL 0.99 - python v2.4
 # @AUTHOR: M. P. Barzine
 # @COPYRIGHT: M. P. Barzine (C), 2011
 # @LICENSE: Released under GPL:
