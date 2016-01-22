@@ -4,7 +4,7 @@
 #
 # @SUMMARY: -- 
 #             
-# Compatibility : teste seulement sur PyMOL 0.99 sous windows XP - python v2.4
+# Compatibility : tested only on PyMOL 0.99  - python v2.4
 # @AUTHOR: M. P. Barzine
 # @COPYRIGHT: M. P. Barzine (C), 2011
 # @LICENSE: Released under GPL:
@@ -35,35 +35,35 @@ import site_utils
 #dÈfinition des fonctions et procÈdures
 def redefinition(ser_list,listCA):
     """
-    recupere une liste particuliere (de serine_site_catal) indexant des serines
-    et renvoie cette liste tout en ayant remplacer les index de ces serines par
-    leur description contenu dans listCA
+        retrieve a specific list (of possible catalitic serine) indexing all the serines
+        and return that list while the index of the serines is replaced by their description
+        in the listCA
     """
 
-    #initialisation de la liste resultat a retourner
-    #print "dans redefinition (serine)" #debug
+    #initialisation of the results list to be return
+    #print "inside redefinition (serine)" #debug
     list_res=list()
     for s in ser_list:
         #print s #debug
         t=(listCA[s[0][0]],s[1],s[2])
         list_res.append(t)
      
-    #print "on sort de redefinition (serine)" #debug
+    #print "out of redefinition (ser)" #debug
     return list_res
 
 
 def serine_site_catal(ser_list,beta_list,atom_L,site_d,opt=True):
     """
-        permet de recuperer la serine la plus probable pour le site catalytique
+        allows to fund the more likely catalytic serine
+        optionnaly later: could modulate the processing based on user choices if needed 
     """
-    #opt permet de moduler si necessaire le traitement en fonction d'un choix donne par l'util
     
-    #initialisation des differentes listes
+    #initialisation of different lists
     ser_site_p=list()
-    ser_site_p0=list() #initialisation de la liste des serines potentielles du site catalytique, on ne les recherche
-    #qu'en c-terminal et en fin  de la description du brin beta considere
-    ser_site_p1plus=list() #initialisation de la liste des serines potentielles du site catalytique, on ne les recherche
-    #qu'en +1 c-terminal  de la description du brin beta considere
+    ser_site_p0=list() #initialisation of potential catalytic site serines list -
+    # research only done at the C-terminal extremity and at the end of description of the current beta 
+    ser_site_p1plus=list() #initialisation of potential catalytic site serines list -
+    # research only done at the (1+ C-terminal extremity) of the end of description of the current beta
     ser_site_p1moins=list() #initialisation de la liste des serines potentielles du site catalytique, on ne les recherche
     #qu'en -1 c-terminal  de la description du brin beta considere
     ser_site_p2plus=list() #initialisation de la liste des serines potentielles du site catalytique, on ne les recherche
