@@ -177,7 +177,7 @@ def verif_acide(list_aa,d, verbose=False):
         return [possibilities,avertissement]
     else :
         #There wasn't acidic aa found which can be catalytic
-        return [['none'],"The current solution does't have any valid catalytic acidic aa"]
+        return [['none'],"The current solution doesn't have any valid catalytic acidic aa"]
     
 
 
